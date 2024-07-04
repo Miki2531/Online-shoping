@@ -1,6 +1,9 @@
 from django.db import models
 from shop.models import Product 
 from django.conf import settings
+from coupons.models import Coupon
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 class Order(models.Model):
     first_name = models.CharField(max_length=50)
@@ -13,6 +16,14 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     stripe_id = models.CharField(max_length=250, blank=True)
     paid = models.BooleanField(default=False)
+    coupon = models.ForeignKey(Coupon,
+                        related_name='orders',
+                        null=True,
+                        blank=True,
+                        on_delete=models.SET_NULL)
+    discount = models.IntegerField(default=0,
+                        validators=[MinValueValidator(0),
+                        MaxValueValidator(100)])
     
     
     class Meta:
