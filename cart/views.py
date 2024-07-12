@@ -4,6 +4,7 @@ from shop.models import Product
 from .cart import Cart
 from .forms import CartAddProductForm
 from coupons.forms import CouponApplyForm
+from shop.recommender import Recommender
 
 @require_POST
 def cart_add(request, product_id):
@@ -32,8 +33,18 @@ def cart_detail(request):
             'override': True
         })
         coupon_apply_form = CouponApplyForm()
+        
+        r = Recommender()
+        cart_prodcuts = [item['product'] for item in cart]
+        if(cart_prodcuts):
+            recommender_products = r.suggest_products_for(
+                cart_prodcuts, max_results=4
+            )
+        else:
+            recommender_products = []
     return render(request, 'cart/detail.html', 
-                  {'cart': cart, 'coupon_apply_form' : coupon_apply_form}
+                  {'cart': cart, 'coupon_apply_form' : coupon_apply_form,
+                   'recommender_products': recommender_products}
                   )
 
 

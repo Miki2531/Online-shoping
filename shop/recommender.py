@@ -28,3 +28,19 @@ class Recommender:
             
             keys = [self.get_product_key(id) for id in product_ids]
             r.zunionstore(tem_key, keys)
+            
+            r.zrem(tem_key, *product_ids)
+            
+            suggestions = r.zrange(tem_key, 0, -1, desc=True)[:max_results]
+            
+            r.delete(tem_key)
+            
+        suggested_products_ids = [int(id) for id in suggestions]
+            
+        suggested_products = list(Product.objects.filter(id__in=suggested_products_ids))
+        suggested_products.sort(key=lambda x: suggested_products_ids.index(x.id))
+        return 
+    
+    def clear_purchases(self):
+        for id in Product.objects.values_list('id', flat=True):
+            r.delete(self.get_product_key(id))
