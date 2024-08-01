@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'payment.apps.PaymentConfig',
     'coupons.apps.CouponsConfig',
     'rosetta',
+    'parler',
 ]
 
 MIDDLEWARE = [
@@ -114,6 +115,17 @@ LANGUAGES = [
     ('es', _('Spanish')),
 ]
 
+PARLER_LANGUAGES = {
+    None: (
+        {'code': 'en'},
+        {'code': 'es'},
+    ),
+    
+    'default' : {
+        'fallback': 'en',
+        'hide_untranslated': False,
+    }
+}
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
